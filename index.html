@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Para Ti | Flores Amarillas</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Quicksand:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Spotify Embed API: inicializar callback ANTES de que cargue el script -->
+    <script>
+      window._spotifyCtrl = null;
+      window._spotifyPending = false;
+      window.onSpotifyIframeApiReady = function (IFrameAPI) {
+        var el = document.getElementById('embed-iframe');
+        if (!el) return;
+        IFrameAPI.createController(
+          el,
+          { uri: 'spotify:playlist:4w1k3QbZt1JyhV7B596nvs', width: 280, height: 152, theme: 0 },
+          function (ctrl) {
+            window._spotifyCtrl = ctrl;
+            if (window._spotifyPending) ctrl.play();
+          }
+        );
+      };
+    </script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+  </head>
+  <body>
+    <!-- Pantalla de entrada (splash) -->
+    <div class="splash" id="splash">
+      <div class="splash-content">
+        <div class="splash-flower">🌻</div>
+        <p class="splash-for">Para Ti</p>
+        <h1 class="splash-title">Flores Amarillas</h1>
+        <p class="splash-sub">Una pequeña luz bajo la medianoche</p>
+        <button class="splash-btn" id="splash-btn">
+          <span class="splash-btn-icon">✨</span>
+          Abrir
+        </button>
+      </div>
+    </div>
+
+    <!-- Reproductor flotante de Spotify -->
+    <div class="spotify-player" id="spotify-player">
+      <button class="spotify-toggle" id="spotify-toggle" aria-label="Toggle music player">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        </svg>
+        <span class="spotify-label">Música</span>
+      </button>
+      <div class="spotify-embed" id="spotify-embed">
+        <!-- El iframe lo inyecta la Spotify Embed API -->
+        <div id="embed-iframe"></div>
+      </div>
+    </div>
+
+    <!-- Fondo con efecto de rocío y estrellas -->
+    <div class="night-overlay"></div>
+
+    <!-- Luna brillante de medianoche -->
+    <div class="moon">
+      <div class="moon-glow"></div>
+    </div>
+
+    <!-- Canvas para las luciérnagas -->
+    <canvas id="fireflies-canvas"></canvas>
+
+    <!-- Mensaje central -->
+    <main class="content">
+      <span class="subtitle">Bajo la luz de medianoche</span>
+      <h1 class="title">Flores Amarillas Para Ti</h1>
+      <p class="dedication">Que nunca te falte luz ni motivos para sonreír.</p>
+    </main>
+
+    <!-- Contenedor donde brotan las flores -->
+    <div class="garden-container" id="garden"></div>
+
+    <!-- Neblina nocturna -->
+    <div class="mist-container" id="mist">
+      <div class="mist-layer mist-1"></div>
+      <div class="mist-layer mist-2"></div>
+      <div class="mist-layer mist-3"></div>
+      <div class="mist-layer mist-4"></div>
+    </div>
+
+    <script>
+      // --- Generación dinámica de flores al cargar ---
+      const garden = document.getElementById("garden");
+      const totalFlowers = 18;
+
+      for (let i = 0; i < totalFlowers; i++) {
+        const flower = document.createElement("div");
+        flower.classList.add("flower-stem");
+
+        // Variaciones aleatorias para realismo
+        const leftPos = Math.random() * 92 + 4; // entre 4% y 96%
+        const height = Math.floor(Math.random() * 100 + 180); // 180px a 280px
+        const delay = (Math.random() * 2.5).toFixed(2); // Retardo en brotar
+        const scale = (Math.random() * 0.35 + 0.75).toFixed(2); // Tamaño relativo
+        const lean = (Math.random() * 14 - 7).toFixed(1); // Ligera inclinación
+        // z-index por posición: flores más a la derecha quedan delante (profundidad)
+        const zIdx = Math.round(leftPos / 10) + 1;
+
+        flower.style.left = `${leftPos}%`;
+        flower.style.setProperty("--target-height", `${height}px`);
+        flower.style.setProperty("--delay", `${delay}s`);
+        flower.style.setProperty("--scale", scale);
+        flower.style.setProperty("--lean", `${lean}deg`);
+        flower.style.zIndex = zIdx;
+
+        flower.innerHTML = `
+        <div class="bud"></div>
+        <div class="bloom">
+          <div class="petal p1"></div>
+          <div class="petal p2"></div>
+          <div class="petal p3"></div>
+          <div class="petal p4"></div>
+          <div class="petal p5"></div>
+          <div class="petal p6"></div>
+          <div class="petal p7"></div>
+          <div class="petal p8"></div>
+          <div class="center">
+            <div class="dewdrop"></div>
+          </div>
+        </div>
+      `;
+        garden.appendChild(flower);
+      }
+
+      // --- Luciérnagas y Rocío en Canvas ---
+      const canvas = document.getElementById("fireflies-canvas");
+      const ctx = canvas.getContext("2d");
+
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const fireflies = Array.from({ length: 45 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 2.2 + 1.2,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        alpha: Math.random(),
+        alphaChange: Math.random() * 0.02 + 0.008,
+      }));
+
+      function animateFireflies() {
+        ctx.clearRect(0, 0, width, height);
+
+        fireflies.forEach((f) => {
+          f.x += f.vx;
+          f.y += f.vy;
+          f.alpha += f.alphaChange;
+
+          if (f.alpha <= 0.1 || f.alpha >= 1) {
+            f.alphaChange = -f.alphaChange;
+          }
+
+          if (f.x < 0) f.x = width;
+          if (f.x > width) f.x = 0;
+          if (f.y < 0) f.y = height;
+          if (f.y > height) f.y = 0;
+
+          // Halo de luz
+          const gradient = ctx.createRadialGradient(
+            f.x,
+            f.y,
+            0,
+            f.x,
+            f.y,
+            f.size * 5,
+          );
+          gradient.addColorStop(0, `rgba(255, 235, 120, ${f.alpha})`);
+          gradient.addColorStop(0.3, `rgba(255, 215, 0, ${f.alpha * 0.4})`);
+          gradient.addColorStop(1, "rgba(255, 215, 0, 0)");
+
+          ctx.beginPath();
+          ctx.fillStyle = gradient;
+          ctx.arc(f.x, f.y, f.size * 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Núcleo brillante
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255, 255, 230, ${f.alpha})`;
+          ctx.arc(f.x, f.y, f.size * 0.8, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        requestAnimationFrame(animateFireflies);
+      }
+      // Las luciérnagas arrancan solo cuando el usuario entra al jardín
+      let fireflyStarted = false;
+      function startFireflies() {
+        if (fireflyStarted) return;
+        fireflyStarted = true;
+        animateFireflies();
+      }
+
+      // --- Splash + música + jardín ---
+      const splashEl   = document.getElementById("splash");
+      const splashBtn  = document.getElementById("splash-btn");
+      const toggleBtn  = document.getElementById("spotify-toggle");
+      const embedPanel = document.getElementById("spotify-embed");
+      let playerOpen   = true;
+
+      splashBtn.addEventListener("click", () => {
+        // 1. Fade-out del splash
+        splashEl.classList.add("splash--out");
+        splashEl.addEventListener("transitionend", () => splashEl.remove(), { once: true });
+
+        // 2. Activar TODAS las animaciones del jardín
+        document.body.classList.add("garden-started");
+
+        // 3. Arrancar luciérnagas
+        startFireflies();
+
+        // 4. Abrir reproductor Spotify
+        embedPanel.classList.add("open");
+        toggleBtn.classList.add("active");
+
+        // 5. Reproducir música — dentro del evento clic (gesto de usuario)
+        window._spotifyPending = true;
+        if (window._spotifyCtrl) {
+          window._spotifyCtrl.play();
+        }
+        // Si el controlador aún no está listo, _spotifyPending=true
+        // hará que se reproduzca en cuanto onSpotifyIframeApiReady termine
+      });
+
+      // Toggle manual del reproductor
+      toggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        playerOpen = !playerOpen;
+        embedPanel.classList.toggle("open", playerOpen);
+        toggleBtn.classList.toggle("active", playerOpen);
+      });
+    </script>
+  </body>
+</html>

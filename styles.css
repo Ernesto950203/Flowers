@@ -1,0 +1,689 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== SPLASH / PANTALLA DE ENTRADA ===== */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    #12213d 0%,
+    #070d1e 55%,
+    #020409 100%
+  );
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.splash--out {
+  opacity: 0;
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+.splash-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: splashIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.splash-flower {
+  font-size: 5rem;
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+  animation: splashBob 2.5s ease-in-out infinite alternate;
+}
+
+.splash-for {
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.8rem;
+  color: #fce38a;
+  opacity: 0.75;
+}
+
+.splash-title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 600;
+  background: linear-gradient(135deg, #fff 20%, #ffeaa7 70%, #ffd000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 24px rgba(255, 234, 167, 0.4));
+  line-height: 1.1;
+}
+
+.splash-sub {
+  font-family: "Quicksand", sans-serif;
+  font-size: 1rem;
+  color: #9ca3af;
+  font-style: italic;
+  max-width: 280px;
+}
+
+.splash-btn {
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2.4rem;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 50px;
+  color: #fce38a;
+  font-family: "Quicksand", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.3s ease, border-color 0.3s ease,
+    transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.12);
+  animation: splashPulse 2s ease-in-out infinite alternate;
+}
+
+.splash-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.28), rgba(255, 215, 0, 0.1));
+  border-color: rgba(255, 215, 0, 0.75);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+}
+
+.splash-btn-icon {
+  font-size: 1.1rem;
+}
+
+@keyframes splashIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes splashBob {
+  from { transform: translateY(0) rotate(-4deg); }
+  to   { transform: translateY(-10px) rotate(4deg); }
+}
+
+@keyframes splashPulse {
+  from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.1); }
+  to   { box-shadow: 0 0 50px rgba(255, 215, 0, 0.28); }
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at 50% 30%,
+    #0d172e 0%,
+    #060b17 60%,
+    #020409 100%
+  );
+  font-family: "Quicksand", sans-serif;
+  color: #fff;
+  position: relative;
+  /* La animación de cámara arranca cuando garden-started se añade al body */
+  transform-origin: center bottom;
+}
+
+/* === Pausar animaciones hasta que el usuario entre al jardín === */
+body:not(.garden-started) .flower-stem,
+body:not(.garden-started) .bloom,
+body:not(.garden-started) .bud,
+body:not(.garden-started) .moon,
+body:not(.garden-started) .content,
+body:not(.garden-started) .mist-container {
+  animation-play-state: paused;
+}
+
+body:not(.garden-started) .mist-container {
+  opacity: 0;
+}
+
+/* === Al entrar: activar cámara y todas las animaciones === */
+body.garden-started {
+  animation: cameraZoomOut 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+}
+
+body.garden-started .mist-container {
+  opacity: 1;
+  transition: opacity 3s ease 1.5s;
+}
+
+/* Efecto de destellos / niebla suave nocturna */
+.night-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at bottom,
+    rgba(30, 41, 59, 0.4) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Luna de medianoche */
+.moon {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  width: 90px;
+  height: 90px;
+  background: radial-gradient(
+    circle at 35% 35%,
+    #ffffff 0%,
+    #fff9d2 50%,
+    #f6e58d 100%
+  );
+  border-radius: 50%;
+  box-shadow:
+    0 0 30px rgba(255, 245, 180, 0.75),
+    0 0 70px rgba(255, 230, 100, 0.45),
+    0 0 120px rgba(255, 215, 0, 0.25);
+  z-index: 3;
+  animation:
+    moonFloat 7s ease-in-out infinite alternate,
+    moonFade 2s ease-out forwards;
+  opacity: 0;
+}
+
+/* Cráteres tenues para textura */
+.moon::before {
+  content: "";
+  position: absolute;
+  top: 22%;
+  left: 28%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(220, 200, 140, 0.25);
+  box-shadow:
+    24px 18px 0 -2px rgba(220, 200, 140, 0.2),
+    12px 36px 0 -4px rgba(220, 200, 140, 0.22);
+}
+
+@keyframes moonFade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes moonFloat {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  100% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+@media (max-width: 600px) {
+  .moon {
+    top: 5%;
+    right: 8%;
+    width: 65px;
+    height: 65px;
+  }
+}
+
+#fireflies-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Contenido / Texto */
+.content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  top: 22%;
+  transform: translateY(-50%);
+  padding: 0 1.5rem;
+  opacity: 0;
+  animation: fadeIn 2.5s ease-out 1.5s forwards;
+}
+
+.subtitle {
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 0.85rem;
+  color: #fce38a;
+  text-shadow: 0 0 10px rgba(252, 227, 138, 0.5);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.title {
+  font-family: "Playfair Display", serif;
+  font-size: 3rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #fff 30%, #ffeaa7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 18px rgba(255, 234, 167, 0.35));
+  margin-bottom: 1rem;
+}
+
+.dedication {
+  font-size: 1.15rem;
+  color: #d1d5db;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Jardín y flores */
+.garden-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Tallo */
+.flower-stem {
+  position: absolute;
+  bottom: 0;
+  width: 5px;
+  height: 0;
+  background: linear-gradient(to top, #1e3a24, #44803f 80%, #7dbb6a);
+  border-radius: 4px 4px 0 0;
+  transform-origin: bottom center;
+  transform: scale(var(--scale)) rotate(var(--lean));
+  animation: growUp 2.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay) forwards;
+  box-shadow: 0 0 8px rgba(68, 128, 63, 0.4);
+}
+
+/* Flor / Cáliz */
+.bloom {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 58px;
+  height: 58px;
+  /* Bloom arranca solo DESPUÉS de que el capón desaparece (3.2s) */
+  animation: bloomPop 1.6s cubic-bezier(0.18, 0.89, 0.32, 1.28)
+    calc(var(--delay) + 3.2s) forwards;
+}
+
+/* Pétalos de tono amarillo radiante */
+.petal {
+  position: absolute;
+  width: 19px;
+  height: 33px;
+  background: linear-gradient(135deg, #fff7a0 0%, #ffd000 60%, #e6a100 100%);
+  border-radius: 50% 50% 40% 40%;
+  top: 50%;
+  left: 50%;
+  transform-origin: center bottom;
+  box-shadow:
+    0 0 12px rgba(255, 215, 0, 0.55),
+    inset 0 0 4px rgba(255, 255, 255, 0.7);
+}
+
+.p1 {
+  transform: translate(-50%, -100%) rotate(0deg);
+}
+.p2 {
+  transform: translate(-50%, -100%) rotate(45deg);
+}
+.p3 {
+  transform: translate(-50%, -100%) rotate(90deg);
+}
+.p4 {
+  transform: translate(-50%, -100%) rotate(135deg);
+}
+.p5 {
+  transform: translate(-50%, -100%) rotate(180deg);
+}
+.p6 {
+  transform: translate(-50%, -100%) rotate(225deg);
+}
+.p7 {
+  transform: translate(-50%, -100%) rotate(270deg);
+}
+.p8 {
+  transform: translate(-50%, -100%) rotate(315deg);
+}
+
+/* Centro de la flor */
+.center {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background: radial-gradient(circle, #ffe169 0%, #b87800 80%, #683b00 100%);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px rgba(255, 225, 105, 0.8);
+}
+
+/* Gotita de rocío con destello */
+.dewdrop {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: radial-gradient(
+    circle at 35% 35%,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.3) 70%,
+    transparent
+  );
+  border-radius: 50%;
+  top: 4px;
+  left: 5px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+}
+
+/* Animaciones */
+@keyframes growUp {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: var(--target-height);
+  }
+}
+
+@keyframes bloomPop {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(-20deg);
+    opacity: 0;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.1) rotate(5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-40%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 2.1rem;
+  }
+  .dedication {
+    font-size: 1rem;
+  }
+}
+
+/* ---- Capullo: lo suficientemente grande para CUBRIR el bloom ---- */
+.bud {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  /* Tamaño grande para tapar el bloom completo (65px) */
+  width: 50px;
+  height: 70px;
+  transform: translate(-50%, -62%) scale(0);
+  background: linear-gradient(
+    to top,
+    #3a7d2e 0%,
+    #5a9e3a 20%,
+    #7dbb6a 35%,
+    #ffd000 65%,
+    #fff7a0 88%,
+    #fffaaa 100%
+  );
+  border-radius: 50% 50% 38% 38%;
+  box-shadow:
+    0 0 18px rgba(255, 215, 0, 0.45),
+    inset 0 0 8px rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  /* Dura 3.2s: visible todo el crecimiento del tallo, desaparece al final */
+  animation: budLife 3.2s ease-out var(--delay) forwards;
+  z-index: 3;
+}
+
+/* Hoja lateral del capón — proporcional al nuevo tamaño */
+.bud::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 58%;
+  width: 18px;
+  height: 13px;
+  background: #5a9e3a;
+  border-radius: 50% 50% 0 80%;
+  transform: rotate(-28deg);
+}
+.bud::after {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: 58%;
+  width: 18px;
+  height: 13px;
+  background: #5a9e3a;
+  border-radius: 50% 50% 80% 0;
+  transform: rotate(28deg);
+}
+
+@keyframes budLife {
+  /* Aparece rápido */
+  0%   { opacity: 0;   transform: translate(-50%, -62%) scale(0.1); }
+  7%   { opacity: 1;   transform: translate(-50%, -62%) scale(1); }
+  /* Se mantiene visible todo el crecimiento del tallo */
+  82%  { opacity: 1;   transform: translate(-50%, -62%) scale(1.04); }
+  /* Desaparece antes de que el bloom abra */
+  100% { opacity: 0;   transform: translate(-50%, -62%) scale(0.05) rotate(8deg); }
+}
+
+/* ---- Neblina nocturna ---- */
+.mist-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 55%;
+  pointer-events: none;
+  z-index: 4;           /* debajo del jardín (5) pero encima de luciérnagas (2) */
+  overflow: hidden;
+}
+
+.mist-layer {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50%;
+}
+
+/* Capa 1: amplia y muy baja — neblina de suelo */
+.mist-1 {
+  width: 130%;
+  height: 220px;
+  left: -15%;
+  bottom: -40px;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 100%,
+    rgba(160, 200, 235, 0.14) 0%,
+    rgba(130, 175, 215, 0.07) 45%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  animation: mistDrift1 26s ease-in-out infinite alternate;
+}
+
+/* Capa 2: media, un poco más arriba */
+.mist-2 {
+  width: 85%;
+  height: 160px;
+  left: 8%;
+  bottom: 30px;
+  background: radial-gradient(
+    ellipse 60% 55% at 50% 80%,
+    rgba(190, 215, 240, 0.11) 0%,
+    rgba(160, 200, 230, 0.06) 50%,
+    transparent 72%
+  );
+  filter: blur(22px);
+  animation: mistDrift2 20s ease-in-out infinite alternate;
+}
+
+/* Capa 3: parche central más elevado */
+.mist-3 {
+  width: 65%;
+  height: 120px;
+  left: 18%;
+  bottom: 80px;
+  background: radial-gradient(
+    ellipse 55% 50% at 50% 70%,
+    rgba(210, 225, 245, 0.09) 0%,
+    transparent 65%
+  );
+  filter: blur(18px);
+  animation: mistDrift3 32s ease-in-out infinite alternate;
+}
+
+/* Capa 4: volumen izquierdo flotante */
+.mist-4 {
+  width: 75%;
+  height: 180px;
+  left: -5%;
+  bottom: 10px;
+  background: radial-gradient(
+    ellipse 65% 58% at 40% 90%,
+    rgba(145, 190, 225, 0.1) 0%,
+    rgba(120, 170, 215, 0.05) 55%,
+    transparent 72%
+  );
+  filter: blur(30px);
+  animation: mistDrift4 28s ease-in-out infinite alternate;
+}
+
+@keyframes mistDrift1 {
+  0%   { transform: translateX(-4%) scaleY(1);    opacity: 0.9; }
+  50%  { transform: translateX(2%)  scaleY(1.08); opacity: 1;   }
+  100% { transform: translateX(6%)  scaleY(0.95); opacity: 0.8; }
+}
+@keyframes mistDrift2 {
+  0%   { transform: translateX(7%)  scaleX(0.92); opacity: 0.8; }
+  50%  { transform: translateX(0%)  scaleX(1);    opacity: 1;   }
+  100% { transform: translateX(-9%) scaleX(1.1);  opacity: 0.9; }
+}
+@keyframes mistDrift3 {
+  0%   { transform: translateX(-10%) translateY(6px);  opacity: 0.7; }
+  50%  { transform: translateX(5%)   translateY(0px);  opacity: 1;   }
+  100% { transform: translateX(14%)  translateY(-4px); opacity: 0.8; }
+}
+@keyframes mistDrift4 {
+  0%   { transform: translateX(4%)  scaleX(1.04); opacity: 0.85; }
+  50%  { transform: translateX(0%)  scaleX(1);    opacity: 1;    }
+  100% { transform: translateX(-6%) scaleX(0.96); opacity: 0.75; }
+}
+
+/* ---- Reproductor flotante de Spotify ---- */
+.spotify-player {
+  position: fixed;
+  bottom: 1.8rem;
+  right: 1.8rem;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.spotify-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: rgba(18, 18, 18, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(29, 185, 84, 0.35);
+  color: #1db954;
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 0.55rem 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  animation: playerFadeIn 1s ease-out 2s both;
+}
+
+.spotify-toggle:hover {
+  background: rgba(29, 185, 84, 0.15);
+  border-color: rgba(29, 185, 84, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(29, 185, 84, 0.25);
+}
+
+.spotify-toggle.active {
+  background: rgba(29, 185, 84, 0.2);
+  border-color: #1db954;
+  box-shadow: 0 4px 24px rgba(29, 185, 84, 0.35);
+}
+
+.spotify-label {
+  letter-spacing: 1.5px;
+}
+
+/* Panel del embed — oculto por defecto */
+.spotify-embed {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  border-radius: 14px;
+  transition:
+    max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+.spotify-embed.open {
+  max-height: 200px;
+  opacity: 1;
+}
+
+.spotify-embed iframe {
+  display: block;
+  border-radius: 14px;
+}
+
+@keyframes playerFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Animación de cámara: zoom suave al entrar ---- */
+@keyframes cameraZoomOut {
+  0%   { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
